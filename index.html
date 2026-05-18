@@ -1,575 +1,631 @@
-import React, { useMemo, useState } from "react";
-import { motion } from "framer-motion";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>S-Class Fitness</title>
 
-function Icon({ name, size = 22, className = "" }) {
-  const common = {
-    width: size,
-    height: size,
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: 2,
-    strokeLinecap: "round",
-    strokeLinejoin: "round",
-    className,
-    "aria-hidden": true,
-  };
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
 
-  const paths = {
-    dumbbell: (
-      <>
-        <path d="M6.5 6.5 17.5 17.5" />
-        <path d="M4 9 9 4" />
-        <path d="M15 20 20 15" />
-        <path d="M2.5 11.5 11.5 2.5" />
-        <path d="M12.5 21.5 21.5 12.5" />
-      </>
-    ),
-    sparkle: (
-      <>
-        <path d="M12 2 14.5 8.5 21 11 14.5 13.5 12 20 9.5 13.5 3 11 9.5 8.5 12 2Z" />
-        <path d="M5 3v4" />
-        <path d="M3 5h4" />
-      </>
-    ),
-    calendar: (
-      <>
-        <rect x="3" y="4" width="18" height="17" rx="2" />
-        <path d="M8 2v4" />
-        <path d="M16 2v4" />
-        <path d="M3 10h18" />
-        <path d="m9 15 2 2 4-4" />
-      </>
-    ),
-    star: (
-      <path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21 7 14.2 2 9.3l6.9-1L12 2Z" />
-    ),
-    mail: (
-      <>
-        <rect x="3" y="5" width="18" height="14" rx="2" />
-        <path d="m3 7 9 6 9-6" />
-      </>
-    ),
-    phone: (
-      <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7A2 2 0 0 1 22 16.9Z" />
-    ),
-    pin: (
-      <>
-        <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" />
-        <circle cx="12" cy="10" r="3" />
-      </>
-    ),
-    check: (
-      <>
-        <circle cx="12" cy="12" r="10" />
-        <path d="m8 12 2.5 2.5L16 9" />
-      </>
-    ),
-    arrow: <path d="M5 12h14m-6-6 6 6-6 6" />,
-    menu: (
-      <>
-        <path d="M4 6h16" />
-        <path d="M4 12h16" />
-        <path d="M4 18h16" />
-      </>
-    ),
-    x: (
-      <>
-        <path d="M18 6 6 18" />
-        <path d="m6 6 12 12" />
-      </>
-    ),
-    shield: (
-      <>
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
-        <path d="m9 12 2 2 4-4" />
-      </>
-    ),
-    heart: (
-      <>
-        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z" />
-        <path d="M3 12h4l2-4 4 8 2-4h6" />
-      </>
-    ),
-    calculator: (
-      <>
-        <rect x="4" y="2" width="16" height="20" rx="2" />
-        <path d="M8 6h8" />
-        <path d="M8 10h.01" />
-        <path d="M12 10h.01" />
-        <path d="M16 10h.01" />
-        <path d="M8 14h.01" />
-        <path d="M12 14h.01" />
-        <path d="M16 14h.01" />
-        <path d="M8 18h.01" />
-        <path d="M12 18h.01" />
-        <path d="M16 18h.01" />
-      </>
-    ),
-    card: (
-      <>
-        <rect x="2" y="5" width="20" height="14" rx="2" />
-        <path d="M2 10h20" />
-      </>
-    ),
-    lock: (
-      <>
-        <rect x="4" y="11" width="16" height="10" rx="2" />
-        <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-      </>
-    ),
-    badge: (
-      <>
-        <path d="M12 2 15 5.5l4.5.5.5 4.5L23 12l-3 1.5-.5 4.5-4.5.5L12 22l-3-3.5-4.5-.5-.5-4.5L1 12l3-1.5.5-4.5L9 5.5 12 2Z" />
-        <path d="m8.5 12 2 2 5-5" />
-      </>
-    ),
-    instagram: (
-      <>
-        <rect x="3" y="3" width="18" height="18" rx="5" />
-        <circle cx="12" cy="12" r="4" />
-        <path d="M17.5 6.5h.01" />
-      </>
-    ),
-  };
+    body{
+      font-family:Arial, sans-serif;
+      background:black;
+      color:white;
+      line-height:1.6;
+    }
 
-  return <svg {...common}>{paths[name] || paths.sparkle}</svg>;
-}
+    header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:20px 8%;
+      border-bottom:1px solid gold;
+      background:#000;
+      position:sticky;
+      top:0;
+    }
 
-const services = [
-  {
-    title: "1-on-1 Personal Training",
-    description: "Private coaching sessions built around your goals, schedule, fitness level, and confidence journey.",
-    icon: "dumbbell",
-  },
-  {
-    title: "Online Coaching",
-    description: "Custom workouts, accountability check-ins, and weekly progress guidance from anywhere.",
-    icon: "calendar",
-  },
-  {
-    title: "Nutrition Guidance",
-    description: "Simple, realistic nutrition support to help you build strength, lose fat, and feel energized.",
-    icon: "heart",
-  },
-  {
-    title: "Transformation Plans",
-    description: "Structured programs for strength, weight loss, toning, and long-term lifestyle change.",
-    icon: "sparkle",
-  },
-];
+    .logo{
+      font-size:32px;
+      font-weight:900;
+      color:gold;
+    }
 
-const packages = [
-  {
-    name: "Starter",
-    price: "$199",
-    detail: "/ month",
-    paymentLink: "https://buy.stripe.com/example-starter",
-    features: ["1 custom workout plan", "Weekly check-in", "Basic nutrition tips", "Progress tracking"],
-    popular: false,
-  },
-  {
-    name: "Signature Coaching",
-    price: "$349",
-    detail: "/ month",
-    paymentLink: "https://buy.stripe.com/example-signature",
-    features: ["4 personal sessions", "Custom workouts", "Nutrition guidance", "Weekly accountability", "Priority messaging"],
-    popular: true,
-  },
-  {
-    name: "Premium Transformation",
-    price: "$549",
-    detail: "/ month",
-    paymentLink: "https://buy.stripe.com/example-premium",
-    features: ["8 personal sessions", "Full training plan", "Meal guidance", "Body composition tracking", "VIP support"],
-    popular: false,
-  },
-];
+    nav a{
+      color:white;
+      text-decoration:none;
+      margin-left:25px;
+      font-weight:bold;
+    }
 
-const testimonials = [
-  {
-    quote: "I finally feel strong, confident, and consistent. The workouts were challenging but realistic for my lifestyle.",
-    name: "Aaliyah R.",
-    result: "Lost 18 lbs + built strength",
-  },
-  {
-    quote: "The coaching helped me stop guessing. I had a real plan, support, and results I could actually see.",
-    name: "Maya T.",
-    result: "12-week transformation",
-  },
-  {
-    quote: "Professional, motivating, and patient. I never felt judged — just pushed to become better.",
-    name: "Samantha K.",
-    result: "Gained confidence in the gym",
-  },
-];
+    nav a:hover{
+      color:gold;
+    }
 
-const faqs = [
-  {
-    q: "Do I need gym experience?",
-    a: "No. Every program is customized for your current fitness level, whether you are brand new or already active.",
-  },
-  {
-    q: "Do you offer online training?",
-    a: "Yes. Online coaching includes custom workouts, check-ins, progress tracking, and accountability support.",
-  },
-  {
-    q: "Can I train for weight loss and strength?",
-    a: "Absolutely. Programs can combine fat loss, strength training, toning, confidence, and healthy habits.",
-  },
-];
+    .hero{
+      min-height:90vh;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:80px 8%;
+      gap:50px;
+      background:linear-gradient(to bottom right,#1a1400,#000);
+    }
 
-function SectionTitle({ eyebrow, title, text }) {
-  return (
-    <div className="mx-auto mb-12 max-w-3xl text-center">
-      <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-[#C8A96B]">{eyebrow}</p>
-      <h2 className="text-3xl font-bold tracking-tight text-[#1C1C1C] md:text-5xl">{title}</h2>
-      {text && <p className="mt-5 text-base leading-7 text-[#6F675F] md:text-lg">{text}</p>}
+    .hero-text{
+      max-width:650px;
+    }
+
+    .hero h1{
+      font-size:80px;
+      color:gold;
+      margin-bottom:15px;
+    }
+
+    .hero h2{
+      font-size:34px;
+      margin-bottom:20px;
+    }
+
+    .hero p{
+      color:#ddd;
+      font-size:20px;
+      margin-bottom:30px;
+    }
+
+    .btn{
+      display:inline-block;
+      background:gold;
+      color:black;
+      padding:16px 32px;
+      border-radius:40px;
+      font-weight:bold;
+      text-decoration:none;
+      margin-right:15px;
+      margin-top:10px;
+    }
+
+    .btn-outline{
+      background:transparent;
+      border:2px solid gold;
+      color:gold;
+    }
+
+    .hero-card{
+      background:#111;
+      border:2px solid gold;
+      padding:35px;
+      border-radius:25px;
+      max-width:400px;
+    }
+
+    .hero-card h3{
+      color:gold;
+      margin-bottom:20px;
+      font-size:28px;
+    }
+
+    .hero-card li{
+      list-style:none;
+      margin:15px 0;
+      color:#ddd;
+    }
+
+    section{
+      padding:80px 8%;
+    }
+
+    .section-title{
+      text-align:center;
+      margin-bottom:50px;
+    }
+
+    .section-title h2{
+      color:gold;
+      font-size:42px;
+      margin-bottom:15px;
+    }
+
+    .section-title p{
+      color:#ccc;
+      max-width:700px;
+      margin:auto;
+    }
+
+    .about{
+      background:#111;
+    }
+
+    .about-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:40px;
+      align-items:center;
+    }
+
+    .about-box{
+      border-left:5px solid gold;
+      padding-left:25px;
+    }
+
+    .about-box h3{
+      font-size:34px;
+      color:gold;
+      margin-bottom:20px;
+    }
+
+    .about-box p{
+      margin-bottom:20px;
+      color:#ddd;
+    }
+
+    .cert-box{
+      background:#000;
+      border:1px solid gold;
+      border-radius:20px;
+      padding:30px;
+    }
+
+    .cert-box h3{
+      color:gold;
+      margin-bottom:20px;
+      font-size:28px;
+    }
+
+    .cert-box li{
+      list-style:none;
+      margin:14px 0;
+      color:#ddd;
+    }
+
+    .services-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:25px;
+    }
+
+    .card{
+      background:#111;
+      border:1px solid gold;
+      border-radius:22px;
+      padding:30px;
+      transition:0.3s;
+    }
+
+    .card:hover{
+      transform:translateY(-8px);
+    }
+
+    .card h3{
+      color:gold;
+      margin-bottom:15px;
+      font-size:24px;
+    }
+
+    .card p{
+      color:#ccc;
+    }
+
+    .transformation{
+      background:#000;
+    }
+
+    .before-after{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:30px;
+    }
+
+    .before,
+    .after{
+      padding:35px;
+      border-radius:25px;
+      background:#111;
+    }
+
+    .before{
+      border:2px solid #b22222;
+    }
+
+    .after{
+      border:2px solid #2e8b57;
+    }
+
+    .before h3{
+      color:#ff4d4d;
+      margin-bottom:20px;
+      font-size:32px;
+    }
+
+    .after h3{
+      color:#4dff88;
+      margin-bottom:20px;
+      font-size:32px;
+    }
+
+    .before li,
+    .after li{
+      list-style:none;
+      margin:14px 0;
+      color:#ddd;
+    }
+
+    .pricing-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:25px;
+    }
+
+    .booking-box{
+      max-width:900px;
+      margin:auto;
+      background:#000;
+      border:2px solid gold;
+      border-radius:25px;
+      padding:35px;
+      text-align:center;
+    }
+
+    iframe{
+      width:100%;
+      height:650px;
+      border:none;
+      border-radius:20px;
+      margin-top:30px;
+      background:white;
+    }
+
+    .contact{
+      text-align:center;
+      background:#000;
+    }
+
+    .contact p{
+      margin:12px 0;
+      font-size:20px;
+      color:#ddd;
+    }
+
+    footer{
+      border-top:1px solid gold;
+      text-align:center;
+      padding:35px;
+      background:#050505;
+    }
+
+    footer h3{
+      color:gold;
+      margin-bottom:10px;
+      font-size:28px;
+    }
+
+    @media(max-width:850px){
+
+      header{
+        flex-direction:column;
+        gap:15px;
+      }
+
+      .hero{
+        flex-direction:column;
+        text-align:center;
+      }
+
+      .hero h1{
+        font-size:56px;
+      }
+
+      .about-grid,
+      .before-after{
+        grid-template-columns:1fr;
+      }
+
+      iframe{
+        height:600px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">S-CLASS</div>
+
+  <nav>
+    <a href="#about">About</a>
+    <a href="#services">Services</a>
+    <a href="#pricing">Programs</a>
+    <a href="#book">Book</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section class="hero">
+
+  <div class="hero-text">
+    <h1>S-CLASS</h1>
+
+    <h2>Elite Sports & Apparel</h2>
+
+    <p>
+      Stronger Body. Stronger Mind. Better You.
+    </p>
+
+    <p>
+      Premium fitness coaching designed to help you transform your body,
+      mindset, discipline, and confidence through personalized training,
+      nutrition support, and accountability.
+    </p>
+
+    <a class="btn" href="https://calendly.com/oluwasolape14/30min" target="_blank">
+      Book Consultation
+    </a>
+
+    <a class="btn btn-outline" href="tel:+16478071401">
+      Call Today
+    </a>
+  </div>
+
+  <div class="hero-card">
+    <h3>Let’s Get Started</h3>
+
+    <ul>
+      <li>📞 (+1) 647-807-1401</li>
+      <li>✉️ sclassesports@gmail.com</li>
+      <li>🏋🏾 Fitness & Personal Training</li>
+      <li>🥇 Elite coaching for real results</li>
+    </ul>
+  </div>
+
+</section>
+
+<section id="about" class="about">
+
+  <div class="section-title">
+    <h2>About Your Trainer</h2>
+
+    <p>
+      Professional coaching built on discipline, accountability, and real results.
+    </p>
+  </div>
+
+  <div class="about-grid">
+
+    <div class="about-box">
+
+      <h3>Oluwasolape Eyitayo</h3>
+
+      <p>
+        Dedicated to helping clients achieve their fitness goals through
+        customized training, nutrition support, and accountability.
+      </p>
+
+      <p>
+        Whether your goal is weight loss, muscle building, strength,
+        confidence, or body recomposition, S-Class is built to help
+        you become the strongest version of yourself.
+      </p>
+
     </div>
-  );
-}
 
-function runWebsiteTests() {
-  console.assert(packages.length === 3, "Expected three pricing packages");
-  console.assert(services.length === 4, "Expected four service cards");
-  console.assert(packages.every((pack) => pack.paymentLink.startsWith("https://")), "Each package should have a secure payment link");
-  console.assert(faqs.length >= 3, "Expected at least three FAQ items");
-}
+    <div class="cert-box">
 
-runWebsiteTests();
+      <h3>Certifications</h3>
 
-export default function PersonalTrainingWebsite() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [height, setHeight] = useState(165);
-  const [weight, setWeight] = useState(68);
+      <ul>
+        <li>✔ ISSA Nutritionist</li>
+        <li>✔ ISSA Strength & Conditioning Specialist</li>
+        <li>✔ ISSA Exercise Therapy Specialist</li>
+        <li>✔ CPR & AED Certified</li>
+        <li>✔ First Aid Certified</li>
+      </ul>
 
-  const bmi = useMemo(() => {
-    const meters = height / 100;
-    if (!meters) return "0.0";
-    return (weight / (meters * meters)).toFixed(1);
-  }, [height, weight]);
-
-  const navItems = ["About", "Services", "Results", "Pricing", "Book"];
-
-  return (
-    <div className="min-h-screen bg-[#F8F5F0] text-[#1C1C1C]">
-      <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-[#1C1C1C]/90 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
-          <a href="#home" className="flex items-center gap-3 text-white">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#C8A96B] text-[#1C1C1C]">
-              <Icon name="dumbbell" size={20} />
-            </div>
-            <div>
-              <p className="text-lg font-bold leading-none">LUXE FIT</p>
-              <p className="text-xs uppercase tracking-[0.25em] text-[#D8C3A5]">Training</p>
-            </div>
-          </a>
-
-          <nav className="hidden items-center gap-8 md:flex">
-            {navItems.map((item) => (
-              <a key={item} href={`#${item.toLowerCase()}`} className="text-sm font-medium text-white/80 transition hover:text-[#C8A96B]">
-                {item}
-              </a>
-            ))}
-          </nav>
-
-          <a href="#book" className="hidden rounded-full bg-[#C8A96B] px-5 py-3 text-sm font-bold text-[#1C1C1C] transition hover:bg-[#D8C3A5] md:inline-flex">
-            Book Consultation
-          </a>
-
-          <button type="button" onClick={() => setMenuOpen(!menuOpen)} className="text-white md:hidden" aria-label="Toggle navigation menu">
-            {menuOpen ? <Icon name="x" /> : <Icon name="menu" />}
-          </button>
-        </div>
-
-        {menuOpen && (
-          <div className="border-t border-white/10 bg-[#1C1C1C] px-5 py-5 md:hidden">
-            <div className="flex flex-col gap-4">
-              {navItems.map((item) => (
-                <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setMenuOpen(false)} className="text-white/80">
-                  {item}
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
-      </header>
-
-      <section id="home" className="relative overflow-hidden bg-[#1C1C1C] pt-28 text-white">
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute -left-24 top-24 h-72 w-72 rounded-full bg-[#C8A96B] blur-3xl" />
-          <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-[#D8C3A5] blur-3xl" />
-        </div>
-
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 py-20 lg:grid-cols-2 lg:px-8 lg:py-28">
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <p className="mb-5 inline-flex rounded-full border border-[#C8A96B]/40 px-4 py-2 text-sm font-semibold uppercase tracking-[0.25em] text-[#D8C3A5]">
-              Premium Personal Training
-            </p>
-            <h1 className="max-w-3xl text-5xl font-black leading-tight tracking-tight md:text-7xl">
-              Transform Your Body. Build Your Confidence.
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-8 text-white/75">
-              Personalized training, realistic nutrition support, and accountability designed to help you feel strong, disciplined, and empowered.
-            </p>
-            <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-              <a href="#book" className="inline-flex items-center justify-center gap-2 rounded-full bg-[#C8A96B] px-7 py-4 font-bold text-[#1C1C1C] transition hover:bg-[#D8C3A5]">
-                Book Your Consultation <Icon name="arrow" size={18} />
-              </a>
-              <a href="#services" className="inline-flex items-center justify-center rounded-full border border-white/25 px-7 py-4 font-bold text-white transition hover:border-[#C8A96B] hover:text-[#C8A96B]">
-                Start Your Fitness Journey
-              </a>
-            </div>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.15 }} className="relative">
-            <div className="aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/10 bg-[#D8C3A5] shadow-2xl">
-              <img
-                src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80"
-                alt="Personal trainer coaching a fitness client"
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <div className="absolute -bottom-6 -left-4 rounded-3xl bg-white p-5 text-[#1C1C1C] shadow-2xl md:-left-8">
-              <p className="text-4xl font-black">500+</p>
-              <p className="text-sm font-semibold text-[#6F675F]">Client sessions coached</p>
-            </div>
-            <div className="absolute -right-4 top-8 rounded-3xl bg-[#C8A96B] p-5 text-[#1C1C1C] shadow-2xl md:-right-8">
-              <p className="flex items-center gap-1 text-lg font-black"><Icon name="star" size={18} /> 5.0</p>
-              <p className="text-sm font-semibold">Client rating</p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      <section id="about" className="px-5 py-20 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div className="overflow-hidden rounded-[2rem] bg-[#D8C3A5] shadow-xl">
-            <img
-              src="https://images.unsplash.com/photo-1609899464726-209befaac5c0?auto=format&fit=crop&w=1200&q=80"
-              alt="Confident personal trainer"
-              className="h-full min-h-[480px] w-full object-cover"
-            />
-          </div>
-          <div>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-[#C8A96B]">Meet Your Coach</p>
-            <h2 className="text-4xl font-bold tracking-tight md:text-5xl">Training that feels personal, powerful, and sustainable.</h2>
-            <p className="mt-6 text-lg leading-8 text-[#6F675F]">
-              I help women build strong bodies and confident habits through customized workouts, supportive coaching, and realistic lifestyle changes. This is not about quick fixes — it is about becoming the strongest version of yourself.
-            </p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              {["Certified Trainer", "Custom Programs", "Supportive Coaching"].map((item) => (
-                <div key={item} className="rounded-2xl bg-white p-5 shadow-sm">
-                  <Icon name="shield" className="mb-3 text-[#C8A96B]" />
-                  <p className="font-bold">{item}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="services" className="bg-white px-5 py-20 lg:px-8">
-        <SectionTitle
-          eyebrow="Services"
-          title="Choose the coaching style that fits your life."
-          text="Every plan is built to be clear, supportive, and results-focused — without making fitness feel overwhelming."
-        />
-        <div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {services.map((service) => (
-            <motion.div whileHover={{ y: -8 }} key={service.title} className="rounded-[2rem] border border-[#F0E7DA] bg-[#F8F5F0] p-7 shadow-sm transition hover:shadow-xl">
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#1C1C1C] text-[#C8A96B]">
-                <Icon name={service.icon} />
-              </div>
-              <h3 className="text-xl font-bold">{service.title}</h3>
-              <p className="mt-4 leading-7 text-[#6F675F]">{service.description}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      <section id="results" className="px-5 py-20 lg:px-8">
-        <SectionTitle
-          eyebrow="Client Results"
-          title="Real progress. Real confidence."
-          text="Showcase client transformations, testimonials, and success stories to build trust with new visitors."
-        />
-        <div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-3">
-          {testimonials.map((item) => (
-            <div key={item.name} className="rounded-[2rem] bg-white p-7 shadow-sm">
-              <div className="mb-5 flex gap-1 text-[#C8A96B]">
-                {[...Array(5)].map((_, i) => <Icon key={i} name="star" size={18} />)}
-              </div>
-              <p className="leading-7 text-[#4A4540]">“{item.quote}”</p>
-              <div className="mt-6 border-t border-[#F0E7DA] pt-5">
-                <p className="font-bold">{item.name}</p>
-                <p className="text-sm text-[#C8A96B]">{item.result}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mx-auto mt-10 grid max-w-7xl gap-6 md:grid-cols-3">
-          {["12-week transformations", "Custom workout plans", "Strength + confidence focus"].map((stat, index) => (
-            <div key={stat} className="rounded-[2rem] bg-[#1C1C1C] p-8 text-center text-white">
-              <p className="text-5xl font-black text-[#C8A96B]">{index === 0 ? "12" : index === 1 ? "100%" : "24/7"}</p>
-              <p className="mt-3 font-semibold text-white/75">{stat}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="pricing" className="bg-white px-5 py-20 lg:px-8">
-        <SectionTitle
-          eyebrow="Pricing"
-          title="Simple packages. Premium support."
-          text="Highlight your best package and make it easy for clients to understand what they receive."
-        />
-        <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-3">
-          {packages.map((pack) => (
-            <div key={pack.name} className={`relative rounded-[2rem] p-8 shadow-sm ${pack.popular ? "bg-[#1C1C1C] text-white ring-4 ring-[#C8A96B]/30" : "bg-[#F8F5F0] text-[#1C1C1C]"}`}>
-              {pack.popular && <p className="absolute right-6 top-6 rounded-full bg-[#C8A96B] px-4 py-2 text-xs font-black uppercase tracking-widest text-[#1C1C1C]">Most Popular</p>}
-              <h3 className="text-2xl font-bold">{pack.name}</h3>
-              <div className="mt-6 flex items-end gap-1">
-                <p className="text-5xl font-black">{pack.price}</p>
-                <p className={pack.popular ? "text-white/60" : "text-[#6F675F]"}>{pack.detail}</p>
-              </div>
-              <ul className="mt-8 space-y-4">
-                {pack.features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-3">
-                    <Icon name="check" className="text-[#C8A96B]" size={20} />
-                    <span className={pack.popular ? "text-white/80" : "text-[#4A4540]"}>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <a href={pack.paymentLink} target="_blank" rel="noreferrer" className={`mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 font-bold transition ${pack.popular ? "bg-[#C8A96B] text-[#1C1C1C] hover:bg-[#D8C3A5]" : "bg-[#1C1C1C] text-white hover:bg-[#C8A96B] hover:text-[#1C1C1C]"}`}>
-                <Icon name="card" size={18} /> Pay Now
-              </a>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="px-5 py-20 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-8 rounded-[2.5rem] bg-[#1C1C1C] p-8 text-white md:grid-cols-2 md:p-12">
-          <div>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-[#C8A96B]">Fitness Tool</p>
-            <h2 className="text-3xl font-bold md:text-4xl">Quick BMI Calculator</h2>
-            <p className="mt-4 text-white/70">Add interactive tools to keep visitors engaged and encourage them to take the next step.</p>
-          </div>
-          <div className="rounded-[2rem] bg-white p-6 text-[#1C1C1C]">
-            <div className="mb-5 flex items-center gap-3">
-              <Icon name="calculator" className="text-[#C8A96B]" />
-              <p className="text-xl font-bold">Your BMI: {bmi}</p>
-            </div>
-            <label className="text-sm font-bold" htmlFor="height-slider">Height: {height} cm</label>
-            <input id="height-slider" type="range" min="140" max="210" value={height} onChange={(e) => setHeight(Number(e.target.value))} className="mt-2 w-full" />
-            <label className="mt-5 block text-sm font-bold" htmlFor="weight-slider">Weight: {weight} kg</label>
-            <input id="weight-slider" type="range" min="40" max="140" value={weight} onChange={(e) => setWeight(Number(e.target.value))} className="mt-2 w-full" />
-          </div>
-        </div>
-      </section>
-
-      <section id="book" className="bg-white px-5 py-20 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-2 lg:items-start">
-          <div>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-[#C8A96B]">Book + Pay</p>
-            <h2 className="text-4xl font-bold tracking-tight md:text-5xl">Reserve your consultation and secure your plan.</h2>
-            <p className="mt-6 text-lg leading-8 text-[#6F675F]">
-              Clients can book a consultation through Calendly, then choose a package and pay securely through Stripe or PayPal.
-            </p>
-
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              <div className="rounded-2xl bg-[#F8F5F0] p-5">
-                <Icon name="calendar" className="mb-3 text-[#C8A96B]" />
-                <p className="font-bold">Calendly Booking</p>
-                <p className="mt-2 text-sm text-[#6F675F]">Schedule consultations instantly.</p>
-              </div>
-              <div className="rounded-2xl bg-[#F8F5F0] p-5">
-                <Icon name="lock" className="mb-3 text-[#C8A96B]" />
-                <p className="font-bold">Secure Checkout</p>
-                <p className="mt-2 text-sm text-[#6F675F]">Stripe or PayPal payment links.</p>
-              </div>
-              <div className="rounded-2xl bg-[#F8F5F0] p-5">
-                <Icon name="badge" className="mb-3 text-[#C8A96B]" />
-                <p className="font-bold">Auto Confirmation</p>
-                <p className="mt-2 text-sm text-[#6F675F]">Professional client experience.</p>
-              </div>
-            </div>
-
-            <div className="mt-8 space-y-4 text-[#4A4540]">
-              <p className="flex items-center gap-3"><Icon name="mail" className="text-[#C8A96B]" /> hello@luxefittraining.com</p>
-              <p className="flex items-center gap-3"><Icon name="phone" className="text-[#C8A96B]" /> (000) 000-0000</p>
-              <p className="flex items-center gap-3"><Icon name="pin" className="text-[#C8A96B]" /> Toronto, Ontario + Online Coaching</p>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="overflow-hidden rounded-[2rem] border border-[#E6D8C6] bg-[#F8F5F0] shadow-sm">
-              <div className="border-b border-[#E6D8C6] bg-[#1C1C1C] p-5 text-white">
-                <p className="text-xl font-bold">Book a Free Consultation</p>
-                <p className="mt-1 text-sm text-white/65">Replace this Calendly link with your real scheduling link.</p>
-              </div>
-              <iframe
-                title="Calendly Booking"
-                src="https://calendly.com/example/consultation?hide_gdpr_banner=1"
-                className="h-[620px] w-full bg-white"
-              />
-            </div>
-
-            <div className="rounded-[2rem] bg-[#1C1C1C] p-7 text-white shadow-sm">
-              <div className="mb-5 flex items-center gap-3">
-                <Icon name="card" className="text-[#C8A96B]" />
-                <div>
-                  <p className="text-xl font-bold">Quick Payment Options</p>
-                  <p className="text-sm text-white/60">Connect these buttons to your real payment links.</p>
-                </div>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-3">
-                <a href="https://buy.stripe.com/example-deposit" target="_blank" rel="noreferrer" className="rounded-full bg-[#C8A96B] px-5 py-4 text-center font-bold text-[#1C1C1C] transition hover:bg-[#D8C3A5]">
-                  Pay Deposit
-                </a>
-                <a href="https://www.paypal.com/paypalme/example" target="_blank" rel="noreferrer" className="rounded-full border border-white/20 px-5 py-4 text-center font-bold text-white transition hover:border-[#C8A96B] hover:text-[#C8A96B]">
-                  Pay with PayPal
-                </a>
-                <a href="https://checkout.stripe.com/example-card-payment" target="_blank" rel="noreferrer" className="rounded-full border border-[#C8A96B] bg-white px-5 py-4 text-center font-bold text-[#1C1C1C] transition hover:bg-[#C8A96B] hover:text-[#1C1C1C]">
-                  Pay with Card
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="px-5 py-20 lg:px-8">
-        <SectionTitle eyebrow="FAQ" title="Questions clients usually ask." />
-        <div className="mx-auto max-w-4xl space-y-4">
-          {faqs.map((faq) => (
-            <details key={faq.q} className="rounded-2xl bg-white p-6 shadow-sm">
-              <summary className="cursor-pointer text-lg font-bold">{faq.q}</summary>
-              <p className="mt-4 leading-7 text-[#6F675F]">{faq.a}</p>
-            </details>
-          ))}
-        </div>
-      </section>
-
-      <footer className="bg-[#1C1C1C] px-5 py-12 text-white lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-3 md:items-center">
-          <div>
-            <p className="text-2xl font-black">LUXE FIT</p>
-            <p className="mt-2 text-sm uppercase tracking-[0.25em] text-[#D8C3A5]">Personal Training</p>
-          </div>
-          <p className="text-white/60 md:text-center">Professional coaching for strength, confidence, wellness, and lasting transformation.</p>
-          <div className="flex gap-4 md:justify-end">
-            <a href="#" className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 transition hover:bg-[#C8A96B] hover:text-[#1C1C1C]" aria-label="Instagram">
-              <Icon name="instagram" size={20} />
-            </a>
-            <a href="mailto:hello@luxefittraining.com" className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 transition hover:bg-[#C8A96B] hover:text-[#1C1C1C]" aria-label="Email">
-              <Icon name="mail" size={20} />
-            </a>
-          </div>
-        </div>
-      </footer>
     </div>
-  );
-}
+
+  </div>
+
+</section>
+
+<section id="services">
+
+  <div class="section-title">
+    <h2>Our Services</h2>
+
+    <p>
+      We don’t just train bodies. We transform lives.
+    </p>
+  </div>
+
+  <div class="services-grid">
+
+    <div class="card">
+      <h3>Personalized Workouts</h3>
+      <p>Custom programs tailored to your goals and fitness level.</p>
+    </div>
+
+    <div class="card">
+      <h3>Meal Plans</h3>
+      <p>Nutrition guidance and meal planning built for results.</p>
+    </div>
+
+    <div class="card">
+      <h3>Accountability</h3>
+      <p>Consistent support to keep you disciplined and progressing.</p>
+    </div>
+
+    <div class="card">
+      <h3>Beginner Friendly</h3>
+      <p>Supportive coaching for beginners and new lifters.</p>
+    </div>
+
+  </div>
+
+</section>
+
+<section class="transformation">
+
+  <div class="section-title">
+    <h2>Transformation</h2>
+
+    <p>
+      From low energy to confidence, discipline, and real results.
+    </p>
+  </div>
+
+  <div class="before-after">
+
+    <div class="before">
+
+      <h3>Before</h3>
+
+      <ul>
+        <li>❌ Low energy</li>
+        <li>❌ Poor habits</li>
+        <li>❌ Inconsistent routines</li>
+        <li>❌ No confidence</li>
+        <li>❌ Not seeing results</li>
+      </ul>
+
+    </div>
+
+    <div class="after">
+
+      <h3>After</h3>
+
+      <ul>
+        <li>✅ High energy</li>
+        <li>✅ Lean and strong</li>
+        <li>✅ Confident</li>
+        <li>✅ Consistent and disciplined</li>
+        <li>✅ Real lasting results</li>
+      </ul>
+
+    </div>
+
+  </div>
+
+</section>
+
+<section id="pricing">
+
+  <div class="section-title">
+    <h2>Training Programs</h2>
+
+    <p>
+      Flexible coaching options customized to your transformation journey.
+    </p>
+  </div>
+
+  <div class="pricing-grid">
+
+    <div class="card">
+      <h3>Starter Program</h3>
+
+      <p>
+        Great for beginners looking to build consistency and confidence.
+      </p>
+
+      <br>
+
+      <a class="btn" href="#contact">
+        Contact for Pricing
+      </a>
+    </div>
+
+    <div class="card">
+      <h3>Signature Coaching</h3>
+
+      <p>
+        Personalized coaching built for serious long-term results.
+      </p>
+
+      <br>
+
+      <a class="btn" href="#contact">
+        Contact for Pricing
+      </a>
+    </div>
+
+    <div class="card">
+      <h3>Premium Transformation</h3>
+
+      <p>
+        Elite coaching experience focused on complete transformation.
+      </p>
+
+      <br>
+
+      <a class="btn" href="#contact">
+        Contact for Pricing
+      </a>
+    </div>
+
+  </div>
+
+</section>
+
+<section id="book">
+
+  <div class="section-title">
+    <h2>Book Your Consultation</h2>
+
+    <p>
+      Schedule your 30-minute consultation directly through Calendly.
+    </p>
+  </div>
+
+  <div class="booking-box">
+
+    <h3 style="color:gold; font-size:28px;">
+      Schedule Your Appointment
+    </h3>
+
+    <iframe src="https://calendly.com/oluwasolape14/30min?hide_gdpr_banner=1"></iframe>
+
+  </div>
+
+</section>
+
+<section id="contact" class="contact">
+
+  <div class="section-title">
+    <h2>Contact</h2>
+
+    <p>
+      Ready to start your transformation?
+    </p>
+  </div>
+
+  <p>📞 (+1) 647-807-1401</p>
+  <p>✉️ sclassesports@gmail.com</p>
+
+  <br>
+
+  <a class="btn" href="tel:+16478071401">
+    Call Today
+  </a>
+
+  <a class="btn btn-outline" href="mailto:sclassesports@gmail.com">
+    Email Us
+  </a>
+
+</section>
+
+<footer>
+
+  <h3>S-CLASS</h3>
+
+  <p>
+    Stronger Body. Stronger Mind. Better You.
+  </p>
+
+</footer>
+
+</body>
+</html>
